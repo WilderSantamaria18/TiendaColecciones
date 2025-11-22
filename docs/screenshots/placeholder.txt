@@ -1,0 +1,6 @@
+Añade aquí capturas del sistema (PNG/JPG). Por ejemplo:
+- inicio.png
+- lista_prendas.png
+- formulario_prenda.png
+
+Si subes imágenes, referencia sus rutas en README.md (docs/screenshots/...).

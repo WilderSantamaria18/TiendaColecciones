@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${prenda.idPrenda != null ? 'Editar Prenda' : 'Nueva Prenda'}"></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link th:href="@{/css/styles.css}" rel="stylesheet">
+</head>
+<body>
+    <div th:replace="layout :: header"></div>
+    
+    <div class="main-content">
+        <div th:replace="layout :: topbar"></div>
+
+        <main class="container">
+        <!-- Page Header -->
+        <div class="d-flex justify-content-end align-items-center mb-4">
+            <a th:href="@{/web/prendas/listar_prendas}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Volver a Lista
+            </a>
+        </div>
+
+        <!-- Form -->
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Datos de la Prenda</h5>
+                    </div>
+                    <div class="card-body">
+                        <form th:action="@{/web/prendas/guardar}" th:object="${prenda}" method="post">
+                            <!-- ID hidden for edit -->
+                            <input type="hidden" th:field="*{idPrenda}">
+                            
+                            <!-- Nombre -->
+                            <div class="mb-3">
+                                <label for="nombre" class="form-label">Nombre *</label>
+                                <input type="text" th:field="*{nombre}" class="form-control" 
+                                       th:class="${#fields.hasErrors('nombre')} ? 'form-control is-invalid' : 'form-control'"
+                                       placeholder="Ingrese el nombre de la prenda">
+                                <div th:if="${#fields.hasErrors('nombre')}" class="invalid-feedback">
+                                    <span th:errors="*{nombre}"></span>
+                                </div>
+                            </div>
+
+                            <!-- Colección -->
+                            <div class="mb-3">
+                                <label for="coleccion" class="form-label">Colección *</label>
+                                <select th:field="*{coleccion.idColeccion}" class="form-select"
+                                        th:class="${#fields.hasErrors('coleccion')} ? 'form-select is-invalid' : 'form-select'">
+                                    <option value="">Seleccione una colección</option>
+                                    <option th:each="col : ${colecciones}" 
+                                            th:value="${col.idColeccion}" 
+                                            th:text="${col.nombre + ' (' + col.anio + ')'}"
+                                            th:selected="${col.idColeccion == prenda.coleccion?.idColeccion}"></option>
+                                </select>
+                                <div th:if="${#fields.hasErrors('coleccion')}" class="invalid-feedback">
+                                    <span th:errors="*{coleccion}"></span>
+                                </div>
+                            </div>
+
+                            <!-- Row for Talla and Color -->
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <!-- Talla -->
+                                    <div class="mb-3">
+                                        <label for="talla" class="form-label">Talla</label>
+                                        <select th:field="*{talla}" class="form-select">
+                                            <option value="">Seleccione talla</option>
+                                            <option value="XS">XS</option>
+                                            <option value="S">S</option>
+                                            <option value="M">M</option>
+                                            <option value="L">L</option>
+                                            <option value="XL">XL</option>
+                                            <option value="XXL">XXL</option>
+                                            <option value="Única">Talla Única</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <!-- Color -->
+                                    <div class="mb-3">
+                                        <label for="color" class="form-label">Color</label>
+                                        <input type="text" th:field="*{color}" class="form-control" 
+                                               placeholder="Ej: Azul, Rojo, Negro">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Precio -->
+                            <div class="mb-3">
+                                <label for="precio" class="form-label">Precio *</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">S/</span>
+                                    <input type="number" th:field="*{precio}" class="form-control" 
+                                           th:class="${#fields.hasErrors('precio')} ? 'form-control is-invalid' : 'form-control'"
+                                           step="0.01" min="0.01" placeholder="0.00">
+                                    <div th:if="${#fields.hasErrors('precio')}" class="invalid-feedback">
+                                        <span th:errors="*{precio}"></span>
+                                    </div>
+                                </div>
+                                <small class="form-text text-muted">Ingrese el precio en soles (mínimo S/ 0.01)</small>
+                            </div>
+
+                            <!-- Estado -->
+                            <div class="mb-3">
+                                <label for="estado" class="form-label">Estado</label>
+                                <select th:field="*{estado}" class="form-select">
+                                    <option value="disponible">Disponible</option>
+                                    <option value="agotada">Agotada</option>
+                                    <option value="descontinuada">Descontinuada</option>
+                                </select>
+                                <small class="form-text text-muted">
+                                    Estado inicial de la prenda en el inventario
+                                </small>
+                            </div>
+
+                            <!-- Buttons -->
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-check-circle"></i> 
+                                    <span th:text="${prenda.idPrenda != null ? 'Actualizar' : 'Guardar'}"></span>
+                                </button>
+                                <a th:href="@{/web/prendas/listar_prendas}" class="btn btn-secondary">
+                                    <i class="bi bi-x-circle"></i> Cancelar
+                                </a>
+                                <!-- Preview colección button (if editing) -->
+                                <a th:if="${prenda.idPrenda != null && prenda.coleccion != null}" 
+                                   th:href="@{/web/coleccion/detalle/{id}(id=${prenda.coleccion.idColeccion})}" 
+                                   class="btn btn-info">
+                                    <i class="bi bi-eye"></i> Ver Colección
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Help Text -->
+        <div class="row justify-content-center mt-4">
+            <div class="col-md-8">
+                <div class="alert alert-info">
+                    <strong>Requisitos:</strong>
+                    <ul class="mb-0 mt-2">
+                        <li><strong>Nombre:</strong> Campo obligatorio, máximo 100 caracteres</li>
+                        <li><strong>Colección:</strong> Debe seleccionar una colección activa</li>
+                        <li><strong>Precio:</strong> Debe ser mayor que cero (mínimo S/ 0.01)</li>
+                        <li><strong>Talla y Color:</strong> Campos opcionales para mejor categorización</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick colección info (if pre-selected) -->
+        <div th:if="${param.coleccion}" class="row justify-content-center mt-3">
+            <div class="col-md-8">
+                <div class="alert alert-success">
+                    <strong>Info:</strong> Se pre-seleccionó la colección para esta nueva prenda.
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <div th:replace="layout :: footer"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

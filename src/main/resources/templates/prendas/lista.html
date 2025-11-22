@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Prendas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link th:href="@{/css/styles.css}" rel="stylesheet">
+</head>
+<body>
+    <!-- Sidebar -->
+    <div th:replace="layout :: header"></div>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <div th:replace="layout :: topbar"></div>
+
+        <!-- Action Bar -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h4 class="mb-1"></h4>
+                <p class="text-muted small mb-0"></p>
+            </div>
+            <a th:href="@{/web/prendas/registroPrenda}" class="btn btn-primary">
+                <i class="bi bi-plus-circle me-2"></i>Nueva Prenda
+            </a>
+        </div>
+
+        <!-- Filter Bar -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <form class="row g-3" method="get" action="/web/prendas/listar_prendas">
+                    <div class="col-md-4">
+                        <label class="form-label">Filtrar por colección</label>
+                        <select class="form-select" name="coleccionId" id="filtroColeccion">
+                            <option value="">Todas las colecciones</option>
+                            <option th:each="coleccion : ${colecciones}" 
+                                    th:value="${coleccion.idColeccion}" 
+                                    th:text="${coleccion.nombre}"
+                                    th:selected="${filtroColeccionId != null and filtroColeccionId == coleccion.idColeccion}"></option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Estado</label>
+                        <select class="form-select" name="estado" id="filtroEstado">
+                            <option value="">Todos los estados</option>
+                            <option value="disponible" th:selected="${filtroEstado == 'disponible'}">Disponible</option>
+                            <option value="agotada" th:selected="${filtroEstado == 'agotada'}">Agotada</option>
+                            <option value="descontinuada" th:selected="${filtroEstado == 'descontinuada'}">Descontinuada</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Buscar en tiempo real</label>
+                        <input type="text" class="form-control" id="buscadorTiempoReal" 
+                               placeholder="Nombre o talla..." th:value="${filtroBusqueda ?: ''}">
+                        
+                    <div class="col-md-2">
+                        <label class="form-label">&nbsp;</label>
+                        <button type="submit" class="btn btn-outline-primary d-block w-100">
+                            <i class="bi bi-search"></i> Filtrar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Prendas Table Card -->
+        <div class="card">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th style="width: 60px;">ID</th>
+                                <th>Nombre</th>
+                                <th>Colección</th>
+                                <th style="width: 80px;">Talla</th>
+                                <th style="width: 100px;">Color</th>
+                                <th style="width: 100px;">Precio</th>
+                                <th style="width: 120px;">Estado</th>
+                                <th style="width: 150px;" class="text-end">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:if="${#lists.isEmpty(prendas)}">
+                                <td colspan="8" class="text-center py-5">
+                                    <i class="bi bi-inbox display-4 text-muted d-block mb-3"></i>
+                                    <p class="text-muted mb-0">No hay prendas registradas</p>
+                                    <a th:href="@{/web/prendas/registroPrenda}" class="btn btn-sm btn-primary mt-3">
+                                        <i class="bi bi-plus-circle me-1"></i>Crear primera prenda
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr th:each="prenda : ${prendas}" 
+                                th:id="'prenda-row-' + ${prenda.idPrenda}"
+                                th:data-nombre="${prenda.nombre}"
+                                th:data-talla="${prenda.talla ?: ''}"
+                                th:data-coleccion-id="${prenda.coleccion.idColeccion}"
+                                th:data-estado="${prenda.estado}">
+                                <td class="text-muted align-middle"><small>#<span th:text="${prenda.idPrenda}"></span></small></td>
+                                <td class="align-middle">
+                                    <strong th:text="${prenda.nombre}"></strong>
+                                </td>
+                                <td class="align-middle">
+                                    <a th:href="@{'/web/coleccion/detalle/' + ${prenda.coleccion.idColeccion}}"
+                                       th:text="${prenda.coleccion.nombre}"
+                                       class="text-decoration-none text-primary"></a>
+                                </td>
+                                <td class="align-middle" th:text="${prenda.talla ?: '-'}"></td>
+                                <td class="align-middle" th:text="${prenda.color ?: '-'}"></td>
+                                <td class="align-middle">
+                                    <strong th:text="'S/ ' + ${#numbers.formatDecimal(prenda.precio, 1, 2)}"></strong>
+                                </td>
+                                <td class="align-middle">
+                                    <span th:switch="${prenda.estado}">
+                                        <span th:case="'disponible'" class="badge bg-success">Disponible</span>
+                                        <span th:case="'agotada'" class="badge bg-warning text-dark">Agotada</span>
+                                        <span th:case="'descontinuada'" class="badge bg-danger">Descontinuada</span>
+                                        <span th:case="*" class="badge bg-secondary" th:text="${prenda.estado}"></span>
+                                    </span>
+                                </td>
+                                <td class="text-end align-middle">
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        <a th:href="@{'/web/prendas/editar/' + ${prenda.idPrenda}}" 
+                                           class="btn btn-outline-warning" title="Editar">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <div class="btn-group btn-group-sm" role="group">
+                                            <button type="button" class="btn btn-outline-secondary dropdown-toggle" 
+                                                    data-bs-toggle="dropdown" title="Cambiar estado">
+                                                <i class="bi bi-three-dots"></i>
+                                            </button>
+                                            <ul class="dropdown-menu">
+                                                <li th:if="${prenda.estado != 'disponible'}">
+                                                    <form th:action="@{'/web/prendas/cambiar-estado/' + ${prenda.idPrenda}}" 
+                                                          method="post" style="margin:0;">
+                                                        <input type="hidden" name="estado" value="disponible">
+                                                        <button type="submit" class="dropdown-item">
+                                                            <i class="bi bi-check-circle text-success me-2"></i>Disponible
+                                                        </button>
+                                                    </form>
+                                                </li>
+                                                <li th:if="${prenda.estado != 'agotada'}">
+                                                    <form th:action="@{'/web/prendas/cambiar-estado/' + ${prenda.idPrenda}}" 
+                                                          method="post" style="margin:0;">
+                                                        <input type="hidden" name="estado" value="agotada">
+                                                        <button type="submit" class="dropdown-item">
+                                                            <i class="bi bi-exclamation-triangle text-warning me-2"></i>Agotada
+                                                        </button>
+                                                    </form>
+                                                </li>
+                                                <li th:if="${prenda.estado != 'descontinuada'}">
+                                                    <form th:action="@{'/web/prendas/cambiar-estado/' + ${prenda.idPrenda}}" 
+                                                          method="post" style="margin:0;">
+                                                        <input type="hidden" name="estado" value="descontinuada">
+                                                        <button type="submit" class="dropdown-item text-danger"
+                                                                onclick="return confirm('¿Descontinuar esta prenda?')">
+                                                            <i class="bi bi-x-circle me-2"></i>Descontinuar
+                                                        </button>
+                                                    </form>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div th:replace="layout :: footer"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Función para filtrar prendas en tiempo real
+        function filtrarPrendas() {
+            const buscador = document.getElementById('buscadorTiempoReal').value.toLowerCase().trim();
+            const filtroColeccion = document.getElementById('filtroColeccion').value;
+            const filtroEstado = document.getElementById('filtroEstado').value;
+            
+            // Obtener todas las filas de prendas
+            const filas = document.querySelectorAll('tr[id^="prenda-row-"]');
+            let prendasVisibles = 0;
+            
+            filas.forEach(fila => {
+                const nombre = fila.getAttribute('data-nombre').toLowerCase();
+                const talla = fila.getAttribute('data-talla').toLowerCase();
+                const coleccionId = fila.getAttribute('data-coleccion-id');
+                const estado = fila.getAttribute('data-estado');
+                
+                // Verificar filtros
+                const cumpleBusqueda = !buscador || nombre.includes(buscador) || talla.includes(buscador);
+                const cumpleColeccion = !filtroColeccion || coleccionId === filtroColeccion;
+                const cumpleEstado = !filtroEstado || estado === filtroEstado;
+                
+                // Mostrar/ocultar fila
+                if (cumpleBusqueda && cumpleColeccion && cumpleEstado) {
+                    fila.style.display = '';
+                    prendasVisibles++;
+                } else {
+                    fila.style.display = 'none';
+                }
+            });
+            
+            // Actualizar mensaje de "no hay prendas"
+            const mensajeVacio = document.querySelector('tr th:if="${#lists.isEmpty(prendas)}"');
+            if (mensajeVacio) {
+                mensajeVacio.style.display = prendasVisibles === 0 ? '' : 'none';
+            }
+        }
+        
+        // Event listeners para filtrado en tiempo real
+        document.addEventListener('DOMContentLoaded', function() {
+            const buscador = document.getElementById('buscadorTiempoReal');
+            const filtroColeccion = document.getElementById('filtroColeccion');
+            const filtroEstado = document.getElementById('filtroEstado');
+            
+            // Filtrar mientras se escribe (con debounce para mejor rendimiento)
+            let timeoutId;
+            buscador.addEventListener('input', function() {
+                clearTimeout(timeoutId);
+                timeoutId = setTimeout(filtrarPrendas, 300); // Esperar 300ms después de que el usuario deje de escribir
+            });
+            
+            // Filtrar inmediatamente al cambiar colección o estado
+            filtroColeccion.addEventListener('change', filtrarPrendas);
+            filtroEstado.addEventListener('change', filtrarPrendas);
+            
+            // Aplicar filtros iniciales si hay valores
+            if (buscador.value || filtroColeccion.value || filtroEstado.value) {
+                filtrarPrendas();
+            }
+        });
+    </script>
+</body>
+</html>

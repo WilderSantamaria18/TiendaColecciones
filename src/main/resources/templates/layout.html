@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${titulo ?: 'Tienda de Ropa'}">Tienda de Ropa</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link th:href="@{/css/styles.css}" rel="stylesheet">
+</head>
+<body>
+    <header th:fragment="header" class="sidebar">
+        <div class="brand">
+            <h4><i class="bi bi-shop"></i> Gestión de Prendas</h4>
+          
+        </div>
+        <nav class="nav flex-column">
+            <a class="nav-link" th:href="@{/}">
+                <i class="bi bi-house-door"></i>
+                <span>Inicio</span>
+            </a>
+            <a class="nav-link" th:href="@{/web/prendas/listar_prendas}">
+                <i class="bi bi-bag"></i>
+                <span>Prendas</span>
+            </a>
+            <a class="nav-link" th:href="@{/web/coleccion/listado}">
+                <i class="bi bi-collection"></i>
+                <span>Colecciones</span>
+            </a>
+        </nav>
+    </header>
+
+    <div class="main-content">
+        <div th:fragment="topbar" class="top-bar">
+            <h1 class="page-title" th:text="${titulo ?: 'Dashboard'}">Dashboard</h1>
+        </div>
+
+        <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i>
+            <span th:text="${success}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            <span th:text="${error}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <div th:block th:fragment="content">
+        </div>
+    </div>
+
+    <footer th:fragment="footer">
+        <div class="text-center">
+            <strong></strong> 
+        </div>
+    </footer>
+
+    
+    <div class="toast-container position-fixed top-50 start-50 translate-middle">
+        <div id="successToast" class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body">
+                    <i class="bi bi-check-circle-fill me-2"></i>
+                    <span id="successMessage">Operación realizada exitosamente</span>
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:inline="javascript">
+        // Función para mostrar toast de éxito
+        function showSuccessToast(message) {
+            const toastElement = document.getElementById('successToast');
+            const messageElement = document.getElementById('successMessage');
+            messageElement.textContent = message || 'Operación realizada exitosamente';
+
+            const toast = new bootstrap.Toast(toastElement, {
+                delay: 4000, // 4 segundos para que sea más visible
+                autohide: true
+            });
+            toast.show();
+        }
+
+        
+        function showErrorToast(message) {
+         
+            let errorToast = document.getElementById('errorToast');
+            if (!errorToast) {
+                const toastContainer = document.querySelector('.toast-container');
+                errorToast = document.createElement('div');
+                errorToast.id = 'errorToast';
+                errorToast.className = 'toast align-items-center text-white bg-danger border-0';
+                errorToast.setAttribute('role', 'alert');
+                errorToast.innerHTML = `
+                    <div class="d-flex">
+                        <div class="toast-body">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                            <span id="errorMessage">${message || 'Ha ocurrido un error'}</span>
+                        </div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                `;
+                toastContainer.appendChild(errorToast);
+            } else {
+                document.getElementById('errorMessage').textContent = message || 'Ha ocurrido un error';
+            }
+
+            const toast = new bootstrap.Toast(errorToast, {
+                delay: 5000 // 5 segundos para errores
+            });
+            toast.show();
+        }
+
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const successParam = urlParams.get('success');
+            const errorParam = urlParams.get('error');
+
+            if (successParam) {
+                showSuccessToast(decodeURIComponent(successParam));
+               
+                const url = new URL(window.location);
+                url.searchParams.delete('success');
+                window.history.replaceState({}, '', url);
+            }
+
+            if (errorParam) {
+                showErrorToast(decodeURIComponent(errorParam));
+            
+                const url = new URL(window.location);
+                url.searchParams.delete('error');
+                window.history.replaceState({}, '', url);
+            }
+
+         
+            const successAlert = document.querySelector('.alert-success');
+            const errorAlert = document.querySelector('.alert-danger');
+
+            if (successAlert && successAlert.textContent.trim()) {
+                showSuccessToast(successAlert.textContent.trim());
+                successAlert.style.display = 'none';
+            }
+
+            if (errorAlert && errorAlert.textContent.trim()) {
+                showErrorToast(errorAlert.textContent.trim());
+                errorAlert.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

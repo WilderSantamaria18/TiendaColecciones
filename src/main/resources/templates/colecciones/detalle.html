@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalle de Colección</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link th:href="@{/css/styles.css}" rel="stylesheet">
+</head>
+<body>
+    <div th:replace="layout :: header"></div>
+    
+    <div class="main-content">
+        <div th:replace="layout :: topbar"></div>
+
+        <main class="container">
+        <!-- Page Header -->
+        <div class="d-flex justify-content-end align-items-center mb-4">
+            <div>
+                <a th:href="@{/colecciones/editar/{id}(id=${coleccion.idColeccion})}" class="btn btn-warning">
+                    <i class="bi bi-pencil"></i> Editar
+                </a>
+                <a th:href="@{/colecciones}" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Volver a Lista
+                </a>
+            </div>
+        </div>
+
+        <!-- Colección Information -->
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Información de la Colección</h5>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-borderless">
+                            <tbody>
+                                <tr>
+                                    <th width="30%">ID:</th>
+                                    <td th:text="${coleccion.idColeccion}"></td>
+                                </tr>
+                                <tr>
+                                    <th>Nombre:</th>
+                                    <td th:text="${coleccion.nombre}"></td>
+                                </tr>
+                                <tr>
+                                    <th>Temporada:</th>
+                                    <td th:text="${coleccion.temporada ?: 'No especificada'}"></td>
+                                </tr>
+                                <tr>
+                                    <th>Año:</th>
+                                    <td th:text="${coleccion.anio}"></td>
+                                </tr>
+                                <tr>
+                                    <th>Estado:</th>
+                                    <td>
+                                        <span th:if="${coleccion.estado}" class="badge bg-success">Activa</span>
+                                        <span th:unless="${coleccion.estado}" class="badge bg-secondary">Inactiva</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Quick Stats -->
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Estadísticas</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row text-center">
+                            <div class="col-6">
+                                <h3 class="text-primary" th:text="${#lists.size(coleccion.prendas ?: {})}">0</h3>
+                                <small class="text-muted">Total Prendas</small>
+                            </div>
+                            <div class="col-6">
+                                <h3 class="text-success" th:text="${#lists.size((coleccion.prendas ?: {}).?[estado == 'disponible'])}">0</h3>
+                                <small class="text-muted">Disponibles</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Prendas de la Colección -->
+        <div class="card mt-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">Prendas de esta Colección</h5>
+                <a th:href="@{/prendas/nuevo(coleccion=${coleccion.idColeccion})}" class="btn btn-sm btn-primary">
+                    <i class="bi bi-plus-circle"></i> Agregar Prenda
+                </a>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead class="table-light">
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>Talla</th>
+                                <th>Color</th>
+                                <th>Precio</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:if="${#lists.isEmpty(coleccion.prendas)}">
+                                <td colspan="7" class="text-center text-muted">
+                                    No hay prendas registradas en esta colección
+                                    <br>
+                                    <a th:href="@{/prendas/nuevo(coleccion=${coleccion.idColeccion})}" class="btn btn-sm btn-outline-primary mt-2">
+                                        Agregar primera prenda
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr th:each="prenda : ${coleccion.prendas}">
+                                <td th:text="${prenda.idPrenda}"></td>
+                                <td th:text="${prenda.nombre}"></td>
+                                <td th:text="${prenda.talla ?: '-'}"></td>
+                                <td th:text="${prenda.color ?: '-'}"></td>
+                                <td th:text="${#numbers.formatCurrency(prenda.precio)}"></td>
+                                <td>
+                                    <span th:switch="${prenda.estado}">
+                                        <span th:case="'disponible'" class="badge bg-success">Disponible</span>
+                                        <span th:case="'agotada'" class="badge bg-warning">Agotada</span>
+                                        <span th:case="'descontinuada'" class="badge bg-danger">Descontinuada</span>
+                                        <span th:case="*" class="badge bg-secondary" th:text="${prenda.estado}"></span>
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <a th:href="@{/prendas/editar/{id}(id=${prenda.idPrenda})}" 
+                                           class="btn btn-sm btn-outline-warning">Editar</a>
+                                        <form th:if="${prenda.estado == 'disponible'}" 
+                                              th:action="@{/prendas/inactivar/{id}(id=${prenda.idPrenda})}" 
+                                              method="post" style="display:inline;">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger" 
+                                                    onclick="return confirm('¿Marcar como agotada?')">
+                                                Agotar
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="alert alert-light">
+                    <strong>Acciones disponibles:</strong>
+                    <ul class="mb-0 mt-2">
+                        <li>Editar información de la colección</li>
+                        <li>Agregar nuevas prendas a la colección</li>
+                        <li>Gestionar estado de prendas existentes</li>
+                        <li th:if="${coleccion.estado}">Inactivar colección (desde la lista principal)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <div th:replace="layout :: footer"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

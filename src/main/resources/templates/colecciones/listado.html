@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title th:text="${titulo}"></title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+<body>
+	<div th:replace="layout :: header"></div>
+
+	<div class="container my-4">
+		<div class="row">
+			<div class="col-12">
+				<div class="d-flex justify-content-between align-items-center mb-4">
+					<h2 th:text="${titulo}" class="text-primary mb-0"></h2>
+					<a th:href="@{/web/coleccion/registroColeccion}" class="btn btn-success">
+						<i class="bi bi-plus-circle me-2"></i>Nueva Colección
+					</a>
+				</div>
+
+				<div class="card">
+					<div class="card-body">
+						<div class="table-responsive">
+							<table class="table table-hover">
+								<thead class="table-dark">
+									<tr>
+										<th>ID</th>
+										<th>Nombre</th>
+										<th>Descripción</th>
+										<th>Temporada</th>
+										<th>Estado</th>
+										<th>Acciones</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr th:each="coleccion : ${listado}">
+										<td th:text="${coleccion.idColeccion}">1</td>
+										<td th:text="${coleccion.nombre}">Verano 2024</td>
+										<td th:text="${coleccion.descripcion}">Descripción de la colección</td>
+										<td th:text="${coleccion.temporada}">Verano</td>
+										<td>
+											<span th:if="${coleccion.estado == 'Activo'}" class="badge bg-success">Activo</span>
+											<span th:if="${coleccion.estado == 'Inactivo'}" class="badge bg-danger">Inactivo</span>
+										</td>
+										<td>
+											<div class="btn-group" role="group">
+												<a th:href="@{'/web/coleccion/editar/' + ${coleccion.idColeccion}}" 
+												   class="btn btn-sm btn-outline-primary">
+													<i class="bi bi-pencil"></i>
+												</a>
+												<a th:href="@{'/web/coleccion/detalle/' + ${coleccion.idColeccion}}" 
+												   class="btn btn-sm btn-outline-info">
+													<i class="bi bi-eye"></i>
+												</a>
+											</div>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+
+						<div th:if="${#lists.isEmpty(listado)}" class="text-center py-4">
+							<i class="bi bi-inbox display-1 text-muted"></i>
+							<h5 class="text-muted mt-3">No hay colecciones registradas</h5>
+							<p class="text-muted">
+								<a th:href="@{/web/coleccion/registroColeccion}" class="btn btn-primary">
+									Crear primera colección
+								</a>
+							</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div th:replace="layout :: footer"></div>
+
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
