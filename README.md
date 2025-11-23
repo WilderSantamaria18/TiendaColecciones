@@ -1,5 +1,7 @@
 # TiendaColecciones
 
+![Página de Inicio](docs/screenshots/Inicio.jpg)
+
 ## Nombre del proyecto
 TiendaColecciones - Sistema de gestión de prendas y colecciones
 
