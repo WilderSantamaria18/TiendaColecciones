@@ -80,7 +80,6 @@ java -jar target\Continua3-0.0.1-SNAPSHOT.jar
 ## Capturas del sistema
 Aquí se muestran algunas capturas de pantalla del sistema en funcionamiento:
 
-![Página de Inicio](docs/screenshots/Inicio.jpg)
 
 ## Autores
 
