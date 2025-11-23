@@ -47,17 +47,17 @@
 
                             <!-- Colección -->
                             <div class="mb-3">
-                                <label for="coleccion" class="form-label">Colección *</label>
-                                <select th:field="*{coleccion.idColeccion}" class="form-select"
-                                        th:class="${#fields.hasErrors('coleccion')} ? 'form-select is-invalid' : 'form-select'">
+                                <label for="idColeccion" class="form-label">Colección *</label>
+                                <select th:field="*{idColeccion}" class="form-select"
+                                        th:class="${#fields.hasErrors('idColeccion')} ? 'form-select is-invalid' : 'form-select'">
                                     <option value="">Seleccione una colección</option>
                                     <option th:each="col : ${colecciones}" 
                                             th:value="${col.idColeccion}" 
                                             th:text="${col.nombre + ' (' + col.anio + ')'}"
-                                            th:selected="${col.idColeccion == prenda.coleccion?.idColeccion}"></option>
+                                            th:selected="${col.idColeccion == prenda.idColeccion}"></option>
                                 </select>
-                                <div th:if="${#fields.hasErrors('coleccion')}" class="invalid-feedback">
-                                    <span th:errors="*{coleccion}"></span>
+                                <div th:if="${#fields.hasErrors('idColeccion')}" class="invalid-feedback">
+                                    <span th:errors="*{idColeccion}"></span>
                                 </div>
                             </div>
 
@@ -127,8 +127,8 @@
                                     <i class="bi bi-x-circle"></i> Cancelar
                                 </a>
                                 <!-- Preview colección button (if editing) -->
-                                <a th:if="${prenda.idPrenda != null && prenda.coleccion != null}" 
-                                   th:href="@{/web/coleccion/detalle/{id}(id=${prenda.coleccion.idColeccion})}" 
+                                <a th:if="${prenda.idPrenda != null && prenda.idColeccion != null}" 
+                                   th:href="@{/web/coleccion/detalle/{id}(id=${prenda.idColeccion})}" 
                                    class="btn btn-info">
                                     <i class="bi bi-eye"></i> Ver Colección
                                 </a>

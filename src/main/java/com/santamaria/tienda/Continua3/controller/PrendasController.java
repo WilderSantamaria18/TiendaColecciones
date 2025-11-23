@@ -41,36 +41,39 @@ public class PrendasController {
 			@RequestParam(required = false) String estado,
 			@RequestParam(required = false) String busqueda) {
 		
+		// Configurar título de la página
 		modelo.addAttribute("titulo", ConstantesApp.TITLE_PRENDAS_LISTA);
 		
-		// Obtener todas las prendas inicialmente
-		var todasLasPrendas = prendasServicio.listarTodas();
+		// Obtener lista completa de prendas desde la base de datos
+		var prendas = prendasServicio.listarTodas();
 		
-		// Aplicar filtros si existen
+		// Filtrar por colección si se especifica
 		if (coleccionId != null) {
-			todasLasPrendas = todasLasPrendas.stream()
-				.filter(p -> p.getColeccion() != null && p.getColeccion().getIdColeccion().equals(coleccionId))
+			prendas = prendas.stream()
+				.filter(prenda -> prenda.getColeccion() != null && 
+						prenda.getColeccion().getIdColeccion().equals(coleccionId))
 				.toList();
 		}
 		
+		// Filtrar por estado si se especifica
 		if (estado != null && !estado.trim().isEmpty()) {
-			todasLasPrendas = todasLasPrendas.stream()
-				.filter(p -> estado.equals(p.getEstado()))
+			prendas = prendas.stream()
+				.filter(prenda -> estado.equals(prenda.getEstado()))
 				.toList();
 		}
 		
+		// Filtrar por búsqueda en nombre o talla
 		if (busqueda != null && !busqueda.trim().isEmpty()) {
-			String busquedaLower = busqueda.toLowerCase().trim();
-			todasLasPrendas = todasLasPrendas.stream()
-				.filter(p -> p.getNombre().toLowerCase().contains(busquedaLower) ||
-						   (p.getTalla() != null && p.getTalla().toLowerCase().contains(busquedaLower)))
+			String textoBusqueda = busqueda.toLowerCase().trim();
+			prendas = prendas.stream()
+				.filter(prenda -> prenda.getNombre().toLowerCase().contains(textoBusqueda) ||
+						   (prenda.getTalla() != null && prenda.getTalla().toLowerCase().contains(textoBusqueda)))
 				.toList();
 		}
 		
-		modelo.addAttribute("prendas", todasLasPrendas);
+		// Enviar datos a la vista
+		modelo.addAttribute("prendas", prendas);
 		modelo.addAttribute("colecciones", coleccionesServicio.listadoActivos());
-		
-
 		modelo.addAttribute("filtroColeccionId", coleccionId);
 		modelo.addAttribute("filtroEstado", estado);
 		modelo.addAttribute("filtroBusqueda", busqueda);
@@ -80,87 +83,137 @@ public class PrendasController {
 
 	@GetMapping("/registroPrenda")
 	public String registroPrenda(Model modelo, @RequestParam(required = false) Long coleccionId) {
+		// Configurar título de la página
 		modelo.addAttribute("titulo", ConstantesApp.TITLE_PRENDAS_FORM);
-		PrendasDto prenda = new PrendasDto();
+		
+		// Crear nuevo objeto DTO para el formulario
+		PrendasDto nuevaPrenda = new PrendasDto();
+		
+		// Si viene una colección pre-seleccionada, la asignamos
 		if (coleccionId != null) {
-			prenda.setIdColeccion(coleccionId);
+			nuevaPrenda.setIdColeccion(coleccionId);
 		}
-		modelo.addAttribute("prenda", prenda);
+		
+		// Enviar datos al formulario
+		modelo.addAttribute("prenda", nuevaPrenda);
 		modelo.addAttribute("colecciones", coleccionesServicio.listadoActivos());
+		
 		return "prendas/form";
 	}
 
 	@GetMapping("/editar/{id}")
 	public String editarPrenda(@PathVariable Long id, Model modelo, RedirectAttributes redirectAttributes) {
 		try {
-			PrendasEntity prenda = prendasServicio.obtenerPorId(id).orElseThrow(() -> new IllegalArgumentException("Prenda no encontrada"));
-			PrendasDto prendasDto = PrendasMapper.toDto(prenda);
+			// Buscar la prenda en la base de datos
+			PrendasEntity prendaEntity = prendasServicio.obtenerPorId(id)
+					.orElseThrow(() -> new IllegalArgumentException("Prenda no encontrada"));
+			
+			// Convertir entidad a DTO para el formulario
+			PrendasDto prendaDto = PrendasMapper.toDto(prendaEntity);
+			
+			// Configurar vista de edición
 			modelo.addAttribute("titulo", "Editar Prenda");
-			modelo.addAttribute("prenda", prendasDto);
+			modelo.addAttribute("prenda", prendaDto);
 			modelo.addAttribute("colecciones", coleccionesServicio.listadoActivos());
+			
 			return "prendas/form";
+			
 		} catch (IllegalArgumentException e) {
+			// Si no se encuentra la prenda, mostrar error y redirigir
 			redirectAttributes.addFlashAttribute("error", e.getMessage());
 			return "redirect:/web/prendas/listar_prendas";
 		}
 	}
 
 	@PostMapping("/guardar")
-	public String guardar(@Valid @ModelAttribute("prenda") PrendasDto prendasDto, BindingResult result, 
-			Model modelo, RedirectAttributes redirectAttributes) {
-		if (result.hasErrors()) {
-			modelo.addAttribute("titulo", prendasDto.getIdPrenda() == null ? 
-					ConstantesApp.TITLE_PRENDAS_FORM : "Editar Prenda");
+	public String guardar(@Valid @ModelAttribute("prenda") PrendasDto prendaDto, 
+						  BindingResult erroresValidacion, 
+						  Model modelo, 
+						  RedirectAttributes mensajesRedireccion) {
+		
+		// Si hay errores de validación, volver al formulario
+		if (erroresValidacion.hasErrors()) {
+			// Determinar título según si es nueva prenda o edición
+			String titulo = (prendaDto.getIdPrenda() == null) ? 
+						ConstantesApp.TITLE_PRENDAS_FORM : "Editar Prenda";
+			
+			modelo.addAttribute("titulo", titulo);
 			modelo.addAttribute("colecciones", coleccionesServicio.listadoActivos());
 			return "prendas/form";
 		}
+		
 		try {
-			ColeccionesEntity coleccion = coleccionesServicio.buscarPorId(prendasDto.getIdColeccion())
+			// Buscar la colección asociada
+			ColeccionesEntity coleccion = coleccionesServicio.buscarPorId(prendaDto.getIdColeccion())
 					.orElseThrow(() -> new IllegalArgumentException("Colección no encontrada"));
 			
-			if (prendasDto.getIdPrenda() != null) {
-				PrendasEntity existente = prendasServicio.obtenerPorId(prendasDto.getIdPrenda())
+			// Verificar si es edición o nuevo registro
+			if (prendaDto.getIdPrenda() != null) {
+				// EDITAR PRENDA EXISTENTE
+				PrendasEntity prendaExistente = prendasServicio.obtenerPorId(prendaDto.getIdPrenda())
 						.orElseThrow(() -> new IllegalArgumentException("Prenda no encontrada"));
-				PrendasMapper.updateEntity(prendasDto, existente, coleccion);
-				prendasServicio.actualizar(existente);
-				redirectAttributes.addFlashAttribute("success", "Prenda actualizada exitosamente");
+				
+				// Actualizar datos de la prenda usando el mapper
+				PrendasMapper.updateEntity(prendaDto, prendaExistente, coleccion);
+				prendasServicio.actualizar(prendaExistente);
+				
+				mensajesRedireccion.addFlashAttribute("success", "Prenda actualizada exitosamente");
+				
 			} else {
-				PrendasEntity nueva = PrendasMapper.toEntity(prendasDto, coleccion);
-				prendasServicio.guardar(nueva);
-				redirectAttributes.addFlashAttribute("success", "Prenda registrada exitosamente");
+				// CREAR NUEVA PRENDA
+				PrendasEntity nuevaPrenda = PrendasMapper.toEntity(prendaDto, coleccion);
+				prendasServicio.guardar(nuevaPrenda);
+				
+				mensajesRedireccion.addFlashAttribute("success", "Prenda registrada exitosamente");
 			}
+			
 		} catch (Exception e) {
-			redirectAttributes.addFlashAttribute("error", "Error al guardar: " + e.getMessage());
+			// Manejar errores y mostrar mensaje
+			mensajesRedireccion.addFlashAttribute("error", "Error al guardar: " + e.getMessage());
 		}
+		
+		// Redirigir a la lista de prendas
 		return "redirect:/web/prendas/listar_prendas";
 	}
 
 	@PostMapping("/cambiar-estado/{id}")
-	public String cambiarEstado(@PathVariable Long id, @RequestParam String estado, RedirectAttributes redirectAttributes) {
+	public String cambiarEstado(@PathVariable Long id, 
+							    @RequestParam String estado, 
+							    RedirectAttributes mensajes) {
 		try {
+			// Buscar la prenda por ID
 			PrendasEntity prenda = prendasServicio.obtenerPorId(id).orElseThrow();
+			
+			// Cambiar el estado y guardar
 			prenda.setEstado(estado);
 			prendasServicio.actualizar(prenda);
-			redirectAttributes.addFlashAttribute("success", "Estado actualizado exitosamente");
+			
+			mensajes.addFlashAttribute("success", "Estado actualizado exitosamente");
+			
 		} catch (Exception e) {
-			redirectAttributes.addFlashAttribute("error", "Error al cambiar estado: " + e.getMessage());
+			mensajes.addFlashAttribute("error", "Error al cambiar estado: " + e.getMessage());
 		}
+		
 		return "redirect:/web/prendas/listar_prendas";
 	}
 
+	// MANEJO DE ERRORES HTTP
+	
+	// Maneja errores de argumentos inválidos (Error 400)
 	@ExceptionHandler(IllegalArgumentException.class)
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
-	public String handleBadRequest(IllegalArgumentException ex, Model model) {
-		model.addAttribute("error", ex.getMessage());
-		model.addAttribute("status", 400);
+	public String manejarErrorArgumento(IllegalArgumentException error, Model modelo) {
+		modelo.addAttribute("error", error.getMessage());
+		modelo.addAttribute("status", 400);
 		return "error/400";
 	}
 
+	// Maneja errores internos del servidor (Error 500)
 	@ExceptionHandler(RuntimeException.class)
 	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-	public String handleServerError(RuntimeException ex, Model model) {
-		model.addAttribute("error", "Error interno del servidor");
-		model.addAttribute("status", 500);
+	public String manejarErrorServidor(RuntimeException error, Model modelo) {
+		modelo.addAttribute("error", "Error interno del servidor");
+		modelo.addAttribute("status", 500);
 		return "error/500";
 	}
 }
