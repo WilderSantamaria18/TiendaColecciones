@@ -55,20 +55,7 @@ java -jar target\Continua3-0.0.1-SNAPSHOT.jar
 ## Capturas del sistema
 Aquí se muestran algunas capturas de pantalla del sistema en funcionamiento:
 
-### Página de Inicio
 ![Página de Inicio](docs/screenshots/Inicio.jpg)
-
-### Lista de Colecciones
-![Lista de Colecciones](docs/screenshots/Listar_colecciones.jpg)
-
-### Detalle de Colección
-![Detalle de Colección](docs/screenshots/Detalle_Coleccion.jpg)
-
-### Editar Colección
-![Editar Colección](docs/screenshots/Editar_Coleccion.jpg)
-
-### Lista de Prendas
-![Lista de Prendas](docs/screenshots/Listar_prendas.jpg)
 
 ## Autores
 - Wilder Santamaria Olivos (Autor principal)
