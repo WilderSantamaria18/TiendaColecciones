@@ -1,0 +1,21 @@
+CREATE DATABASE tienda_ropa;
+USE tienda_ropa;
+
+CREATE TABLE colecciones (
+    id_coleccion BIGINT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    temporada VARCHAR(50),
+    anio INT NOT NULL,
+    estado TINYINT(1) NOT NULL DEFAULT 1
+);
+
+CREATE TABLE prendas (
+    id_prenda BIGINT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    talla VARCHAR(10),
+    color VARCHAR(50),
+    precio DECIMAL(10, 2) NOT NULL,
+    estado VARCHAR(20) NOT NULL DEFAULT 'disponible',
+    id_coleccion BIGINT NOT NULL,
+    FOREIGN KEY (id_coleccion) REFERENCES colecciones(id_coleccion)
+);

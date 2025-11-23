@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.santamaria.tienda.Continua3.entity.PrendasEntity;
+import com.santamaria.tienda.Continua3.entity.ColeccionesEntity;
 import com.santamaria.tienda.Continua3.service.PrendasService;
 import com.santamaria.tienda.Continua3.service.ColeccionesService;
 import com.santamaria.tienda.Continua3.util.ConstantesApp;
@@ -73,9 +74,16 @@ public class PrendasController {
 	}
 
 	@GetMapping("/registroPrenda")
-	public String registroPrenda(Model modelo) {
+	public String registroPrenda(Model modelo, @RequestParam(required = false) Long coleccionId) {
 		modelo.addAttribute("titulo", ConstantesApp.TITLE_PRENDAS_FORM);
-		modelo.addAttribute("prenda", new PrendasEntity());
+		PrendasEntity prenda = new PrendasEntity();
+		if (coleccionId != null) {
+			ColeccionesEntity coleccion = coleccionesServicio.buscarPorId(coleccionId).orElse(null);
+			if (coleccion != null) {
+				prenda.setColeccion(coleccion);
+			}
+		}
+		modelo.addAttribute("prenda", prenda);
 		modelo.addAttribute("colecciones", coleccionesServicio.listadoActivos());
 		return "prendas/form";
 	}
