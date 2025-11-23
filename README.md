@@ -51,12 +51,22 @@ java -jar target\Continua3-0.0.1-SNAPSHOT.jar
 - Registrar colección: `/web/coleccion/registroColeccion`
 
 ## Capturas del sistema
-Incluye aquí imágenes del sistema (pantallazos). Si trabajas localmente, añade los archivos en una carpeta `docs/screenshots/` y referencia su ruta aquí.
+Aquí se muestran algunas capturas de pantalla del sistema en funcionamiento:
 
-Ejemplo:
+### Página de Inicio
+![Página de Inicio](docs/screenshots/Inicio.jpg)
 
-- `docs/screenshots/inicio.png`
-- `docs/screenshots/lista_prendas.png`
+### Lista de Colecciones
+![Lista de Colecciones](docs/screenshots/Listar_colecciones.jpg)
+
+### Detalle de Colección
+![Detalle de Colección](docs/screenshots/Detalle_Coleccion.jpg)
+
+### Editar Colección
+![Editar Colección](docs/screenshots/Editar_Coleccion.jpg)
+
+### Lista de Prendas
+![Lista de Prendas](docs/screenshots/Listar_prendas.jpg)
 
 ## Autores
 - Wilder Santamaria Olivos (Autor principal)
