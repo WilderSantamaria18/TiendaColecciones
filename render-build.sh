@@ -1,8 +1,8 @@
+#!/bin/bash
 # Render Build Script
-# This file tells Render how to build your application
+echo "Starting build process..."
 
 # Install Maven dependencies and build the project
 mvn clean package -DskipTests
 
-# Make the start script executable
-chmod +x start.sh
+echo "Build completed successfully!"
