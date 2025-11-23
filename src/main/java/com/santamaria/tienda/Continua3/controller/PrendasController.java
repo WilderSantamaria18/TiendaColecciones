@@ -103,26 +103,23 @@ public class PrendasController {
 
 	@GetMapping("/editar/{id}")
 	public String editarPrenda(@PathVariable Long id, Model modelo, RedirectAttributes redirectAttributes) {
-		try {
-			// Buscar la prenda en la base de datos
-			PrendasEntity prendaEntity = prendasServicio.obtenerPorId(id)
-					.orElseThrow(() -> new IllegalArgumentException("Prenda no encontrada"));
-			
-			// Convertir entidad a DTO para el formulario
-			PrendasDto prendaDto = PrendasMapper.toDto(prendaEntity);
-			
-			// Configurar vista de edición
-			modelo.addAttribute("titulo", "Editar Prenda");
-			modelo.addAttribute("prenda", prendaDto);
-			modelo.addAttribute("colecciones", coleccionesServicio.listadoActivos());
-			
-			return "prendas/form";
-			
-		} catch (IllegalArgumentException e) {
-			// Si no se encuentra la prenda, mostrar error y redirigir
-			redirectAttributes.addFlashAttribute("error", e.getMessage());
+		// Buscar la prenda en la base de datos
+		PrendasEntity prendaEntity = prendasServicio.obtenerPorId(id).orElse(null);
+		
+		if (prendaEntity == null) {
+			redirectAttributes.addFlashAttribute("error", "Prenda no encontrada");
 			return "redirect:/web/prendas/listar_prendas";
 		}
+		
+		// Convertir entidad a DTO para el formulario
+		PrendasDto prendaDto = PrendasMapper.toDto(prendaEntity);
+		
+		// Configurar vista de edición
+		modelo.addAttribute("titulo", "Editar Prenda");
+		modelo.addAttribute("prenda", prendaDto);
+		modelo.addAttribute("colecciones", coleccionesServicio.listadoActivos());
+		
+		return "prendas/form";
 	}
 
 	@PostMapping("/guardar")
@@ -142,16 +139,24 @@ public class PrendasController {
 			return "prendas/form";
 		}
 		
+		// Buscar la colección asociada
+		ColeccionesEntity coleccion = coleccionesServicio.buscarPorId(prendaDto.getIdColeccion()).orElse(null);
+		
+		if (coleccion == null) {
+			mensajesRedireccion.addFlashAttribute("error", "Colección no encontrada");
+			return "redirect:/web/prendas/listar_prendas";
+		}
+		
 		try {
-			// Buscar la colección asociada
-			ColeccionesEntity coleccion = coleccionesServicio.buscarPorId(prendaDto.getIdColeccion())
-					.orElseThrow(() -> new IllegalArgumentException("Colección no encontrada"));
-			
 			// Verificar si es edición o nuevo registro
 			if (prendaDto.getIdPrenda() != null) {
 				// EDITAR PRENDA EXISTENTE
-				PrendasEntity prendaExistente = prendasServicio.obtenerPorId(prendaDto.getIdPrenda())
-						.orElseThrow(() -> new IllegalArgumentException("Prenda no encontrada"));
+				PrendasEntity prendaExistente = prendasServicio.obtenerPorId(prendaDto.getIdPrenda()).orElse(null);
+				
+				if (prendaExistente == null) {
+					mensajesRedireccion.addFlashAttribute("error", "Prenda no encontrada");
+					return "redirect:/web/prendas/listar_prendas";
+				}
 				
 				// Actualizar datos de la prenda usando el mapper
 				PrendasMapper.updateEntity(prendaDto, prendaExistente, coleccion);

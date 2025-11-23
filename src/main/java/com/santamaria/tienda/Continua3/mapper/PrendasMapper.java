@@ -41,24 +41,28 @@ public class PrendasMapper {
     }
 
     // Actualiza una entidad existente con datos del DTO
-    public static PrendasEntity updateEntity(PrendasDto dto, PrendasEntity entity, ColeccionesEntity coleccion) {
+    public static void updateEntity(PrendasDto dto, PrendasEntity entity, ColeccionesEntity coleccion) {
         if (dto == null || entity == null) {
-            return entity;
+            return;
         }
 
-        entity.setNombre(dto.getNombre());
-        entity.setTalla(dto.getTalla());
-        entity.setColor(dto.getColor());
-        entity.setPrecio(dto.getPrecio());
-        
+        if (dto.getNombre() != null) {
+            entity.setNombre(dto.getNombre());
+        }
+        if (dto.getTalla() != null) {
+            entity.setTalla(dto.getTalla());
+        }
+        if (dto.getColor() != null) {
+            entity.setColor(dto.getColor());
+        }
+        if (dto.getPrecio() != null) {
+            entity.setPrecio(dto.getPrecio());
+        }
         if (dto.getEstado() != null) {
             entity.setEstado(dto.getEstado());
         }
-        
         if (coleccion != null) {
             entity.setColeccion(coleccion);
         }
-
-        return entity;
     }
 }
