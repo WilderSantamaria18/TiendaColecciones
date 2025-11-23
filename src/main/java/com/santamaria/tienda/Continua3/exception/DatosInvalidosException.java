@@ -1,7 +1,7 @@
 package com.santamaria.tienda.Continua3.exception;
 
 /**
- * Excepción personalizada para datos inválidos en formularios
+ * datos inválidos en formularios
  */
 public class DatosInvalidosException extends RuntimeException {
     

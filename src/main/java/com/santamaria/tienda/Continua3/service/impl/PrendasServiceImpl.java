@@ -52,7 +52,7 @@ public class PrendasServiceImpl implements PrendasService {
             throw new IllegalArgumentException("Los datos de la prenda son requeridos");
         }
         
-        // RNF19.V3: Validar que el precio sea mayor que cero
+        // Validar que el precio sea mayor que cero
         if (prenda.getPrecio() == null || prenda.getPrecio().doubleValue() <= 0) {
             throw new com.santamaria.tienda.Continua3.exception.PrecioInvalidoException(
                 "El precio debe ser un número mayor que cero. Precio recibido: " + 
@@ -60,7 +60,7 @@ public class PrendasServiceImpl implements PrendasService {
             );
         }
         
-        // RNF19.V4: No permitir registrar prenda sin colección asociada
+        //  No permitir registrar prenda sin colección asociada
         if (prenda.getColeccion() == null || prenda.getColeccion().getIdColeccion() == null) {
             throw new com.santamaria.tienda.Continua3.exception.PrendaSinColeccionException(
                 "No se puede registrar una prenda sin una colección asociada"

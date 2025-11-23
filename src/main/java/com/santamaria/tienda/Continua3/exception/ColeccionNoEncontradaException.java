@@ -1,7 +1,7 @@
 package com.santamaria.tienda.Continua3.exception;
 
 /**
- * Excepción personalizada cuando no se encuentra una colección
+ * Excepción cuando no se encuentra una colección
  */
 public class ColeccionNoEncontradaException extends RuntimeException {
     

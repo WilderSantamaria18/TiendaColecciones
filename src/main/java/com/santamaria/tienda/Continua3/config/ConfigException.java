@@ -15,10 +15,7 @@ import com.santamaria.tienda.Continua3.exception.DatosInvalidosException;
 import com.santamaria.tienda.Continua3.exception.PrecioInvalidoException;
 import com.santamaria.tienda.Continua3.exception.PrendaSinColeccionException;
 
-/**
- * Manejador global de excepciones - Código hecho a mano
- * Captura errores y muestra páginas HTML personalizadas
- */
+
 @ControllerAdvice
 public class ConfigException {
 

@@ -46,14 +46,14 @@ public class ColeccionesServiceImpl implements ColeccionesService {
             throw new IllegalArgumentException("Los datos de la colección son requeridos");
         }
         
-        // RNF19.V1: Validar que el nombre de la colección sea obligatorio
+        // Validar que el nombre de la colección sea obligatorio
         if (entidad.getNombre() == null || entidad.getNombre().trim().isEmpty()) {
             throw new com.santamaria.tienda.Continua3.exception.DatosInvalidosException(
                 "nombre", "el nombre de la colección es obligatorio"
             );
         }
         
-        // RNF19.V2: Validar que el año sea numérico y razonable
+        // Validar que el año sea numérico y razonable
         if (entidad.getAnio() == null || entidad.getAnio() < 1900 || entidad.getAnio() > 2100) {
             throw new com.santamaria.tienda.Continua3.exception.DatosInvalidosException(
                 "año", "el año debe estar entre 1900 y 2100. Año recibido: " + entidad.getAnio()

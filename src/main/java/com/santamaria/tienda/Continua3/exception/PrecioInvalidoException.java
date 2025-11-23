@@ -1,8 +1,8 @@
 package com.santamaria.tienda.Continua3.exception;
 
 /**
- * Excepción personalizada para precios inválidos
- * RNF19.V3: Validar que el precio de la prenda sea un número mayor que cero
+ * Excepción  para precios inválidos
+ * Validar que el precio de la prenda sea un número mayor que cero
  */
 public class PrecioInvalidoException extends RuntimeException {
     

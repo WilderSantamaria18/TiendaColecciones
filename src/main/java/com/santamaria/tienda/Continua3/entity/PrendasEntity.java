@@ -24,31 +24,30 @@ import lombok.Setter;
 @NoArgsConstructor
 @Builder
 public class PrendasEntity {
-    
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id_prenda")
-	private Long idPrenda;
-    
-	
-	@Column(nullable = false, length = 100)
-	private String nombre;
-  
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_prenda")
+    private Long idPrenda;
+
+    @Column(nullable = false, length = 100)
+    private String nombre;
+
     @Column(length = 10)
     private String talla;
-    
+
     @Column(length = 50)
     private String color;
-    
-	@Column(nullable = false, precision = 10, scale = 2)
-	
-	private BigDecimal precio;
-    
+
+    @Column(nullable = false, precision = 10, scale = 2)
+
+    private BigDecimal precio;
+
     @Column(nullable = false, length = 20)
     @Builder.Default
     private String estado = "disponible";
-    
-	@ManyToOne(optional = false)
-	@JoinColumn(name = "id_coleccion", nullable = false)
-	private ColeccionesEntity coleccion;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "id_coleccion", nullable = false)
+    private ColeccionesEntity coleccion;
 }
