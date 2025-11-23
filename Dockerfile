@@ -1,22 +1,26 @@
-FROM openjdk:17-jdk-slim
+FROM maven:3.9.6-eclipse-temurin-17 as builder
 
 WORKDIR /app
 
-# Copy Maven wrapper and pom.xml first for dependency caching
-COPY mvnw pom.xml ./
-COPY .mvn .mvn
-
-# Download dependencies
-RUN chmod +x mvnw && ./mvnw dependency:go-offline
-
 # Copy source code
-COPY src src
+COPY . .
 
 # Build application
-RUN ./mvnw clean package -DskipTests
+RUN mvn clean package -DskipTests
+
+# Runtime image
+FROM eclipse-temurin:17-jre
+
+WORKDIR /app
+
+# Copy the built JAR from builder stage
+COPY --from=builder /app/target/Continua3-0.0.1-SNAPSHOT.jar app.jar
 
 # Expose port
 EXPOSE 8080
 
+# Set environment variables
+ENV SPRING_PROFILES_ACTIVE=prod
+
 # Run application
-CMD ["java", "-Dspring.profiles.active=prod", "-Dserver.port=8080", "-jar", "target/Continua3-0.0.1-SNAPSHOT.jar"]
+CMD ["java", "-jar", "/app/app.jar"]
