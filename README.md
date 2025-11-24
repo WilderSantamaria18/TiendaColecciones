@@ -428,7 +428,7 @@ FROM openjdk:17-slim
 
 - **Instituto**: IDAT
 - **Materia**: Desarrollo de Servicios Web
-- **Ciclo**: Ciclo IV
+- **Ciclo**: Ciclo V
 - **Docente**: [Erik Pariona Yauricasa]
 
 ---
@@ -488,25 +488,3 @@ mvn clean install
 **Última actualización**: 2025-11-23
 **Versión del proyecto**: 1.0
 **Estado**: Producción
-
----
-
-## Pruebas del Sistema
-
-### 7.1 Pruebas funcionales
-
-A continuación se muestra una tabla de pruebas funcionales con los casos más relevantes. Completa la columna "Resultado Obtenido" tras ejecutar las pruebas.
-
-| Caso | Acción | Resultado Esperado | Resultado Obtenido | Estado |
-| ---- | ------ | ------------------ | ------------------ | ------ |
-| 1 | Registrar categoría (colección) | La colección se guarda correctamente y aparece en el listado |  | Pendiente |
-| 2 | Registrar prenda y asociarla a una colección | La prenda se guarda y aparece en el listado de prendas de la colección |  | Pendiente |
-| 3 | Editar prenda existente | Los cambios se guardan y se reflejan en la vista/listado |  | Pendiente |
-| 4 | Eliminar (lógico) prenda | El `estado` de la prenda cambia a inactivo y deja de mostrarse en listados activos |  | Pendiente |
-| 5 | Ver hijos por padre (prendas por colección) | Al seleccionar una colección se muestran solo sus prendas activas |  | Pendiente |
-| 6 | Acceso a formulario de registro de prenda | El formulario carga sin errores y muestra lista de colecciones para selección |  | Pendiente |
-| 7 | Manejo de error 500 (simular fallo servidor) | Se muestra la página `error/500.html` personalizada sin excepción Thymeleaf |  | Pendiente |
-
-Notas:
-- Actualiza la tabla con "OK/Fail" y detalles en "Resultado Obtenido" tras ejecutar cada caso.
-- Si encuentras fallos, copia el stacktrace o los mensajes de log y añádelos en una sección de "Incidencias" para seguimiento.
