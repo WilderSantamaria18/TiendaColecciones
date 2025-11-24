@@ -1,9 +1,11 @@
 # Tienda de Ropa - Sistema de Gestión de Prendas y Colecciones
 
 ## Descripción General
+
 Sistema web de gestión de tienda de ropa desarrollado con **Java 17** y **Spring Boot 3.x**. Permite gestionar colecciones de prendas con una relación padre-hijo, incluyendo operaciones CRUD, validaciones y eliminación lógica.
 
 ## 🚀 Aplicación en Vivo
+
 **URL de Producción**: [https://tienda-colecciones-docker.onrender.com](https://tienda-colecciones-docker.onrender.com)
 
 *Nota: Al usar el plan gratuito de Render, la aplicación puede tardar 30-60 segundos en cargar la primera vez si ha estado inactiva.*
@@ -27,6 +29,7 @@ Proyecto educativo desarrollado como continuidad en la materia de Desarrollo de 
 - **IDE recomendado**: VS Code, IntelliJ IDEA o Eclipse
 
 ### Requisitos Mínimos
+
 - Conexión a internet (para descargar dependencias Maven)
 - ~500MB de espacio libre
 - Puerto 8080 disponible (puerto por defecto de la aplicación)
@@ -36,6 +39,7 @@ Proyecto educativo desarrollado como continuidad en la materia de Desarrollo de 
 ## 3. Pasos de Instalación
 
 ### Paso 1: Clonar el Repositorio
+
 ```bash
 git clone https://github.com/WilderSantamaria18/TiendaColecciones.git
 cd TiendaColecciones
@@ -44,6 +48,7 @@ cd TiendaColecciones
 ### Paso 2: Configurar la Base de Datos
 
 #### Opción A: Crear base de datos manualmente
+
 ```sql
 CREATE DATABASE IF NOT EXISTS tienda_ropa;
 USE tienda_ropa;
@@ -69,11 +74,13 @@ CREATE TABLE IF NOT EXISTS prendas (
 ```
 
 #### Opción B: Ejecutar script SQL incluido
+
 ```bash
 mysql -u root -p < database_script.sql
 ```
 
 #### Opción C: Levantar MySQL con Docker (recomendado)
+
 ```powershell
 docker run --name tienda-mysql -e MYSQL_ROOT_PASSWORD=123456 -e MYSQL_DATABASE=tienda_ropa -p 3306:3306 -d mysql:8.0
 ```
@@ -116,28 +123,34 @@ Si la compilación es exitosa, deberías ver: `BUILD SUCCESS`
 ## 4. Ejecución
 
 ### Opción 1: Ejecutar con Maven (Desarrollo)
+
 ```powershell
 mvn spring-boot:run
 ```
 
 ### Opción 2: Ejecutar JAR empaquetado
+
 ```powershell
 mvn clean package -DskipTests
 java -jar target\Continua3-0.0.1-SNAPSHOT.jar
 ```
 
 ### Opción 3: Ejecutar con puerto personalizado
+
 ```powershell
 mvn spring-boot:run -Dspring-boot.run.arguments="--server.port=8081"
 ```
 
 ### Opción 4: Ejecutar desde IDE
+
 1. Abrir proyecto en IntelliJ IDEA o VS Code
 2. Configurar SDK a Java 17
 3. Hacer clic derecho en `Continua3Application.java` → **Run**
 
 ### Acceso a la Aplicación
+
 Una vez ejecutada, acceder en el navegador:
+
 - **Página principal**: `http://localhost:8080/`
 - **Listado de prendas**: `http://localhost:8080/web/prendas/listar`
 - **Registrar prenda**: `http://localhost:8080/web/prendas/registroPrenda`
@@ -152,6 +165,7 @@ Una vez ejecutada, acceder en el navegador:
 **Versión de Java requerida**: Java 17 (JDK 17)
 
 **Comandos de ejecución**:
+
 ```powershell
 # Modo desarrollo (logs en consola)
 mvn spring-boot:run
@@ -165,6 +179,7 @@ mvn spring-boot:run -Dspring-boot.run.arguments="--server.port=8081"
 ```
 
 **URLs principales**:
+
 - Página raíz: `http://localhost:8080/`
 - Prendas: `http://localhost:8080/web/prendas/listar`
 - Colecciones: `http://localhost:8080/web/colecciones/listar`
@@ -174,12 +189,14 @@ mvn spring-boot:run -Dspring-boot.run.arguments="--server.port=8081"
 ### 5.2 Manual Paso a Paso
 
 #### Cómo registrar un elemento padre (Colección)
+
 1. Ir a `http://localhost:8080/web/colecciones/listar`
 2. Hacer clic en **"Nueva Colección"**
 3. Completar formulario (nombre, temporada, año)
 4. Pulsar **Guardar**
 
 #### Cómo registrar un elemento hijo (Prenda)
+
 1. Ir a `http://localhost:8080/web/prendas/listar`
 2. Hacer clic en **"Registrar Prenda"**
 3. Seleccionar la **Colección** padre
@@ -187,18 +204,21 @@ mvn spring-boot:run -Dspring-boot.run.arguments="--server.port=8081"
 5. Pulsar **Guardar**
 
 #### Cómo editar
+
 1. Localizar el elemento en su lista
 2. Hacer clic en **Editar**
 3. Modificar datos
 4. Pulsar **Guardar**
 
 #### Cómo eliminar (eliminación lógica)
+
 1. Localizar el elemento en su lista
 2. Hacer clic en **Inactivar** / **Eliminar**
 3. Confirmar la acción
 4. El elemento se marca como inactivo (no se borra de BD)
 
 #### Cómo ver prendas por colección
+
 - Desde lista de colecciones: clic en **"Ver Prendas"**
 - Desde lista de prendas: filtrar por colección
 - Acceso directo: `http://localhost:8080/web/prendas/listar?coleccionId=1`
@@ -210,6 +230,7 @@ mvn spring-boot:run -Dspring-boot.run.arguments="--server.port=8081"
 ### 6.1 Dependencias de Maven
 
 **Esenciales incluidas en pom.xml**:
+
 - `spring-boot-starter-web` - Spring MVC
 - `spring-boot-starter-thymeleaf` - Motor de plantillas
 - `spring-boot-starter-data-jpa` - Acceso a datos
@@ -220,6 +241,7 @@ mvn spring-boot:run -Dspring-boot.run.arguments="--server.port=8081"
 ### 6.2 application.properties - Ejemplos de Configuración
 
 #### Para MySQL (Actual)
+
 ```properties
 spring.application.name=Continua3
 server.port=${PORT:8080}
@@ -235,6 +257,7 @@ spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL8Dialect
 ```
 
 #### Para H2 (Desarrollo sin MySQL)
+
 ```properties
 spring.application.name=Continua3
 server.port=8080
@@ -300,6 +323,7 @@ src/main/
 ```
 
 ### Patrones Utilizados
+
 - **MVC**: Separación de controladores, vistas y datos
 - **DTO + Mapper**: Controllers usan DTOs, servicios usan Entities
 - **Eliminación Lógica**: Cambio de estado en lugar de borrado físico
@@ -309,29 +333,31 @@ src/main/
 
 ## 9. Rutas Principales
 
-| HTTP | Ruta | Descripción |
-|------|------|-------------|
-| GET | `/web/prendas/listar` | Listar prendas activas |
-| GET | `/web/prendas/registroPrenda` | Formulario nueva prenda |
-| POST | `/web/prendas/guardar` | Guardar prenda |
-| GET | `/web/prendas/editar/{id}` | Formulario edición |
-| POST | `/web/prendas/cambiarEstado/{id}` | Inactivar prenda |
-| GET | `/web/colecciones/listar` | Listar colecciones |
-| GET | `/web/colecciones/nueva` | Formulario nueva colección |
-| POST | `/web/colecciones/guardar` | Guardar colección |
-| GET | `/web/colecciones/editar/{id}` | Formulario edición |
-| POST | `/web/colecciones/inactivar/{id}` | Inactivar colección |
+| HTTP | Ruta                                | Descripción                |
+| ---- | ----------------------------------- | --------------------------- |
+| GET  | `/web/prendas/listar`             | Listar prendas activas      |
+| GET  | `/web/prendas/registroPrenda`     | Formulario nueva prenda     |
+| POST | `/web/prendas/guardar`            | Guardar prenda              |
+| GET  | `/web/prendas/editar/{id}`        | Formulario edición         |
+| POST | `/web/prendas/cambiarEstado/{id}` | Inactivar prenda            |
+| GET  | `/web/colecciones/listar`         | Listar colecciones          |
+| GET  | `/web/colecciones/nueva`          | Formulario nueva colección |
+| POST | `/web/colecciones/guardar`        | Guardar colección          |
+| GET  | `/web/colecciones/editar/{id}`    | Formulario edición         |
+| POST | `/web/colecciones/inactivar/{id}` | Inactivar colección        |
 
 ---
 
 ## 10. Capturas del Sistema
 
 ### Interfaz Principal
+
 - Página de inicio con navegación
 - Listado responsivo de prendas y colecciones
 - Formularios validados con Bootstrap
 
 ### Funcionalidades Visuales
+
 - ✅ Tablas con datos paginados
 - ✅ Botones de acción (Editar, Eliminar, Ver)
 - ✅ Formularios con validación cliente/servidor
@@ -340,6 +366,7 @@ src/main/
 - ✅ Diseño responsive con Bootstrap 5
 
 ### Ejemplo de Uso
+
 1. Acceder a `http://localhost:8080/`
 2. Navegar a "Colecciones" → crear nueva colección
 3. Navegar a "Prendas" → crear prenda y asignarla a colección
@@ -351,12 +378,14 @@ src/main/
 ## 11. Despliegue en Producción
 
 ### Render.com
+
 - **Plataforma**: Render.com (PaaS gratuito)
 - **Base de datos**: PostgreSQL en Render
 - **Docker**: Aplicación containerizada con multi-stage build
 - **Dominio**: https://tienda-colecciones-docker.onrender.com
 
 ### Docker
+
 ```dockerfile
 # Ver archivo Dockerfile en raíz del proyecto
 FROM maven:3.8-openjdk-17 AS build
@@ -371,15 +400,16 @@ FROM openjdk:17-slim
 ## 12. Cambios Recientes (v1.0)
 
 ### ✅ Implementado
+
 - Refactorización con DTOs y Mappers
 - Validaciones con Jakarta Validation
 - Manejo robusto de errores
 - Páginas de error personalizadas
 - Eliminación lógica de registros
-- Código simplificado y "student-friendly"
 - Documentación completa
 
 ### 📋 Próximas Mejoras
+
 - [ ] ControllerAdvice centralizado
 - [ ] Mappers con MapStruct
 - [ ] Tests unitarios completos
@@ -392,25 +422,28 @@ FROM openjdk:17-slim
 
 - **Wilder Santamaria Olivos** - Autor Principal
   - GitHub: [@WilderSantamaria18](https://github.com/WilderSantamaria18)
-  - Rol: Desarrollo Full Stack
+  - Rol: Desarrollador
 
 ### Entidad Educativa
-- **Instituto**: IDAT (Instituto de Data)
+
+- **Instituto**: IDAT
 - **Materia**: Desarrollo de Servicios Web
-- **Ciclo**: Ciclo 3
-- **Docente**: [Nombre del docente]
+- **Ciclo**: Ciclo IV
+- **Docente**: [Erik Pariona Yauricasa]
 
 ---
 
 ## 14. Licencia y Referencias
 
 ### Documentación Oficial Consultada
+
 - [Apache Maven Documentation](https://maven.apache.org/)
 - [Spring Boot 3.x Reference](https://docs.spring.io/spring-boot/docs/3.5.7/reference/)
 - [Spring Data JPA Guide](https://docs.spring.io/spring-data/jpa/reference/)
 - [Thymeleaf Documentation](https://www.thymeleaf.org/)
 
 ### Herramientas Utilizadas
+
 - Spring Boot 3.5.7
 - Maven 3.8+
 - MySQL 8.0
@@ -422,16 +455,19 @@ FROM openjdk:17-slim
 ## 15. Notas Importantes
 
 ### Para Desarrollo Local
+
 - Asegurar que MySQL esté corriendo en puerto 3306
 - Verificar credenciales en `application.properties`
 - Ejecutar `mvn clean install` si hay problemas de dependencias
 
 ### Para Producción (Render)
+
 - Database URL usa PostgreSQL (no MySQL)
 - Variables de entorno configuradas en Render dashboard
 - Revisar logs en Render si hay errores: https://dashboard.render.com
 
 ### Resolución de Problemas Comunes
+
 ```bash
 # Si falla compilación
 mvn clean install -U
@@ -452,3 +488,25 @@ mvn clean install
 **Última actualización**: 2025-11-23
 **Versión del proyecto**: 1.0
 **Estado**: Producción
+
+---
+
+## Pruebas del Sistema
+
+### 7.1 Pruebas funcionales
+
+A continuación se muestra una tabla de pruebas funcionales con los casos más relevantes. Completa la columna "Resultado Obtenido" tras ejecutar las pruebas.
+
+| Caso | Acción | Resultado Esperado | Resultado Obtenido | Estado |
+| ---- | ------ | ------------------ | ------------------ | ------ |
+| 1 | Registrar categoría (colección) | La colección se guarda correctamente y aparece en el listado |  | Pendiente |
+| 2 | Registrar prenda y asociarla a una colección | La prenda se guarda y aparece en el listado de prendas de la colección |  | Pendiente |
+| 3 | Editar prenda existente | Los cambios se guardan y se reflejan en la vista/listado |  | Pendiente |
+| 4 | Eliminar (lógico) prenda | El `estado` de la prenda cambia a inactivo y deja de mostrarse en listados activos |  | Pendiente |
+| 5 | Ver hijos por padre (prendas por colección) | Al seleccionar una colección se muestran solo sus prendas activas |  | Pendiente |
+| 6 | Acceso a formulario de registro de prenda | El formulario carga sin errores y muestra lista de colecciones para selección |  | Pendiente |
+| 7 | Manejo de error 500 (simular fallo servidor) | Se muestra la página `error/500.html` personalizada sin excepción Thymeleaf |  | Pendiente |
+
+Notas:
+- Actualiza la tabla con "OK/Fail" y detalles en "Resultado Obtenido" tras ejecutar cada caso.
+- Si encuentras fallos, copia el stacktrace o los mensajes de log y añádelos en una sección de "Incidencias" para seguimiento.
