@@ -1,4 +1,4 @@
--- Script SQL simple y corregido para TiendaColecciones
+
 CREATE DATABASE IF NOT EXISTS tienda_ropa;
 USE tienda_ropa;
 
