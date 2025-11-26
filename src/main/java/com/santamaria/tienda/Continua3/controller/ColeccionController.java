@@ -76,13 +76,14 @@ public class ColeccionController {
 	@GetMapping("/detalle/{id}")
 	public String verDetalleColeccion(@PathVariable Long id, Model modelo, RedirectAttributes mensajes) {
 		try {
-			// Buscar colección para mostrar detalle
+			// RF19.10: Buscar colección para mostrar detalle con sus prendas
 			ColeccionesEntity coleccion = servicio.buscarPorId(id)
 					.orElseThrow(() -> new IllegalArgumentException("Colección no encontrada"));
 			
 			// Configurar vista de detalle
 			modelo.addAttribute("titulo", "Detalle de Colección");
 			modelo.addAttribute("coleccion", coleccion);
+			// Las prendas se cargan desde la relación OneToMany de la entidad (lazy o eager)
 			
 			return "colecciones/detalle";
 			

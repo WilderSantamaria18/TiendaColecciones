@@ -23,6 +23,7 @@ public class ColeccionesServiceImpl implements ColeccionesService {
 
     @Override
     public void inactivar(Long id){
+        // Inactivar la colección estableciendo su estado a false
         coleccionesRepository.findById(id).ifPresent(coleccion -> {
             coleccion.setEstado(false);
             coleccionesRepository.save(coleccion);
@@ -59,8 +60,9 @@ public class ColeccionesServiceImpl implements ColeccionesService {
                 "año", "el año debe estar entre 1900 y 2100. Año recibido: " + entidad.getAnio()
             );
         }
-       
-        if (entidad.getIdColeccion() == null && entidad.getEstado() == null) {
+        
+        // RNF19.V1: Si es nueva colección (sin ID), establecer estado por defecto en true
+        if (entidad.getIdColeccion() == null) {
             entidad.setEstado(true);
         }
         return coleccionesRepository.save(entidad);

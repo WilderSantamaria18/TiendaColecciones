@@ -29,7 +29,8 @@ public class PrendasServiceImpl implements PrendasService {
 
     @Override
     public List<PrendasEntity> listarPorColeccion(Long coleccionId) {
-        return prendasRepository.findByColeccion_IdColeccionAndEstado(coleccionId, ConstantesApp.ESTADO_DISPONIBLE);
+        // RF19.6: Listar todas las prendas de una coleccion, sin filtrar por estado
+        return prendasRepository.findByColeccion_IdColeccion(coleccionId);
     }
 
     @Override
@@ -95,10 +96,11 @@ public class PrendasServiceImpl implements PrendasService {
 
     @Override
     public void inactivar(Long id) {
+        // RF19.7: Cambiar estado a descontinuada para marcar la prenda como inactiva
         PrendasEntity prenda = prendasRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Prenda no encontrada"));
         
-        prenda.setEstado(ConstantesApp.ESTADO_AGOTADA);
+        prenda.setEstado("descontinuada");
         prendasRepository.save(prenda);
     }
 }
