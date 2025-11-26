@@ -96,7 +96,8 @@ public class ColeccionController {
 	@PostMapping("/guardar")
 	public String guardarColeccion(@Valid @ModelAttribute("coleccion") ColeccionesDto coleccionDto, 
 								   BindingResult erroresValidacion, 
-								   Model modelo) {
+								   Model modelo,
+								   RedirectAttributes mensajesRedireccion) {
 		
 		// Si hay errores de validación, volver al formulario
 		if (erroresValidacion.hasErrors()) {
@@ -131,32 +132,32 @@ public class ColeccionController {
 				mensajeExito = "¡Colección registrada exitosamente!";
 			}
 			
-			// Redirigir con mensaje de éxito
-			return "redirect:/web/coleccion/listado?success=" + 
-				   java.net.URLEncoder.encode(mensajeExito, java.nio.charset.StandardCharsets.UTF_8);
+			// Usar RedirectAttributes en lugar de parámetros URL
+			mensajesRedireccion.addFlashAttribute("success", mensajeExito);
+			return "redirect:/web/coleccion/listado";
 			
 		} catch (Exception e) {
 			// Manejar errores
 			String mensajeError = "Error al guardar: " + e.getMessage();
-			return "redirect:/web/coleccion/listado?error=" + 
-				   java.net.URLEncoder.encode(mensajeError, java.nio.charset.StandardCharsets.UTF_8);
+			mensajesRedireccion.addFlashAttribute("error", mensajeError);
+			return "redirect:/web/coleccion/listado";
 		}
 	}
 
 	@PostMapping("/inactivar/{id}")
-	public String inactivarColeccion(@PathVariable Long id) {
+	public String inactivarColeccion(@PathVariable Long id, RedirectAttributes mensajes) {
 		try {
 			// Inactivar colección usando el servicio
 			servicio.inactivar(id);
 			
 			String mensajeExito = "¡Colección inactivada exitosamente!";
-			return "redirect:/web/coleccion/listado?success=" + 
-				   java.net.URLEncoder.encode(mensajeExito, java.nio.charset.StandardCharsets.UTF_8);
+			mensajes.addFlashAttribute("success", mensajeExito);
+			return "redirect:/web/coleccion/listado";
 			
 		} catch (Exception e) {
 			String mensajeError = "Error al inactivar: " + e.getMessage();
-			return "redirect:/web/coleccion/listado?error=" + 
-				   java.net.URLEncoder.encode(mensajeError, java.nio.charset.StandardCharsets.UTF_8);
+			mensajes.addFlashAttribute("error", mensajeError);
+			return "redirect:/web/coleccion/listado";
 		}
 	}
 
